@@ -11,7 +11,7 @@ import {
 } from "./testLogic";
 
 // import * as Chess from "chess"
-// todo: remove additions from chess.js
+// todo: remove additions from chess.js (tofile)
 
 /**
  * Given a list of the moves in a chess game, return the squares where the pieces were captured.
@@ -24,7 +24,6 @@ function processGame(chessMovesList) {
     // To keep track of individual chess pieces
     let chessPieces = {};
     let finalCapturedPieces = {};
-    let capturedPiece;
 
     // Iterate over all the chess moves
     for (let i = 0; i < chessMoves.length; i++) {
@@ -43,85 +42,87 @@ function processGame(chessMovesList) {
             chessPieces[rookPiece] = currMove.color == "w" ? ["d1"] : ["d8"];
         }
 
-        // if the moved file is different, suppose Re4 -> Rf4.
-        /* 
-        * If the piece moves in the same file, it'll be identified correctly. 
-        * But, if the piece moves to a different file, we can find the original 
-        * square by looking where it was at it's previous move. 
-        * For example: Initially, if Ra1 moves to Rb1 -> chessPieces[wra] = [b1]
-        * If it now moves to Rc1, we have no idea where did it originally belong to. 
-        * It could be the right side rook too (Rh8), who knows? So, we check in the 
-        * chessPieces, where did it move from and then it's key would be the original piece.
-        */
+        /*
+         * If the piece moves in the same file, it'll be identified correctly.
+         * But, if the piece moves to a different file, we can find the original
+         * square by looking where it was at it's previous move.
+         * For example: Initially, if Ra1 moves to Rb1 -> chessPieces[wra] = [b1]
+         * If it now moves to Rc1, we have no idea where did it originally belong to.
+         * It could be the right side rook too (Rh8), who knows? So, we check in the
+         * chessPieces, where did it move from and then it's key would be the original piece.
+         */
         Object.entries(chessPieces).forEach(([k, val]) => {
             let lastPiece = k.charAt(1);
-            for (let j = 0; j < val.length; j++) {
-                // Check last piece and current piece to make sure other pieces which moved from that
-                // square won't be included. For example:
-                if (val[j] == currMove.from && lastPiece == currMove.piece) {
-                    piece = k;
-                }
-            }
+            // Check last piece and current piece to make sure other pieces which moved from that
+            // square won't be included. For example: Nc3 -> Nd5 and then later at some point c3 -> c4
+            if (val.at(-1) == currMove.from && lastPiece == currMove.piece) {
+              piece = k;
+          }
         });
-        // console.log(piece)
+
+        // If there's a capture, track that captured piece by locating where it last moved to.
         if (
             currMove.flags == "c" ||
             currMove.flags == "e" ||
             currMove.flags == "cp"
         ) {
-            let capturedColor = currMove.color == "w" ? "b" : "w";
-            let capturedFile = currMove.tofile;
-            let capturedPieceCode = currMove.captured;
-            capturedPiece = capturedColor + capturedPieceCode + capturedFile;
-            // if captured piece file is different
+            let capturedPiece
+            // Search for the captured piece
             Object.entries(chessPieces).forEach(([k, val]) => {
-                // since en passant jumps twice, there might be a piece prior where the
-                // capturing pawn will go.
-                if (
-                    currMove.flags == "c" ||
-                    currMove.flags == "p" ||
-                    currMove.flags == "cp"
-                ) {
-                    for (let j = 0; j < val.length; j++) {
-                        if (val[j] == currMove.to) {
-                            capturedPiece = k;
-                        }
-                    }
+                if (currMove.flags == "c" || currMove.flags == "cp") {
+                  if (val.at(-1)== currMove.to) {
+                    capturedPiece = k
+                  }
+                }
+                // En Passant
+                if(currMove.flags == "e") {
+                  let capturedColor = currMove.color == "w" ? "b" : "w";
+                  capturedPiece = capturedColor + "p" + currMove.tofile
                 }
             });
-
-            // if piece is captured at original location
+            // If piece is captured at original location. For example: Nb1
             if (!chessPieces[capturedPiece]) {
-                console.log(piece, capturedPiece);
-                finalCapturedPieces[boardNotation[capturedPiece]] = currMove.to;
+              let capturedColor = currMove.color == "w" ? "b" : "w";
+              let capturedPiece =
+              capturedColor + currMove.captured + currMove.tofile;
+              finalCapturedPieces[boardNotation[capturedPiece]] = currMove.to;
             } else {
-                finalCapturedPieces[boardNotation[capturedPiece]] =
-                    chessPieces[capturedPiece].at(-1);
-                delete chessPieces[capturedPiece];
+              /* 
+               * Update the square of captured piece in final captured pieces and delete
+               * it from tracking it further. If we don't delete it, there can be 
+               * pieces with multiple same squares, like a dead piece sitting at an 
+               * alive piece's square. 
+              */ 
+              finalCapturedPieces[boardNotation[capturedPiece]] =
+              chessPieces[capturedPiece].at(-1);
+              delete chessPieces[capturedPiece];
             }
         }
-        // if a pawn is promoted, it's over for that pawn, no need to track the promoted piece
+        // If a pawn is promoted, it's now considered to be captured,
+        // and no need to track the promoted piece.
         if (currMove.flags == "cp" || currMove.flags == "np") {
-            console.log(piece)
             chessPieces[piece].push(currMove.to);
-            finalCapturedPieces[boardNotation[piece]] = chessPieces[piece].at(-1);
+            finalCapturedPieces[boardNotation[piece]] =
+                chessPieces[piece].at(-1);
             delete chessPieces[piece];
+            // Uniquely identify the promoted piece, but ignore if it's captured in the future.
             piece = piece + "P";
-            console.log(piece)
         }
+        // If piece already exists, update it's new location. Else, create one.
         if (chessPieces[piece]) {
             chessPieces[piece].push(currMove.to);
         } else {
             chessPieces[piece] = [currMove.to];
         }
     }
-    // if promoted piece gets captured later, it gives undefined as boardnotation doesn't have notation for it, so remove that undefined
+    // If promoted piece gets captured later, it gives undefined as boardNotation doesn't have notation for it, so remove that undefined.
     Object.keys(finalCapturedPieces).forEach((key) => {
         if (key == "undefined") {
             delete finalCapturedPieces[key];
         }
     });
 
+    // Update the final king's square if there's a checkmate.
     if (chess.in_checkmate()) {
         let king = chess.turn() + "ke";
         if (chessPieces[king]) {
@@ -138,12 +139,13 @@ function processGame(chessMovesList) {
     return finalCapturedPieces;
 }
 
+// Ignore, just for testing
 function testCode(gamesMovesList, gamePiecesCaptureList) {
     for (let i = 0; i < gamesMovesList.length; i++) {
         let game = processGame(gamesMovesList[i]);
         let res = objectEquals(game, gamePiecesCaptureList[i]);
-        if (res===false) {
-            console.log('Error')
+        if (res === false) {
+            console.log("Error");
         }
     }
 }
