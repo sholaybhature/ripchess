@@ -28,6 +28,7 @@ const game1Captures = {
     e8: "h5",
 };
 
+// https://lichess.org/BkhWOMuL
 const game2 =
     "d4 d5 Nf3 Nc6 Nc3 Nf6 e3 a6 Bd3 g6 e4 e6 e5 Ng4 Bg5 Be7 h4 O-O Qe2 Bxg5 hxg5 Nb4 Rh4 Nxd3+ cxd3 h5 gxh6 f5 exf6 e5 dxe5 d4 Qe4 dxc3 Qxg6+ Kh8 Qg7#";
 const game2Captures = {
@@ -40,7 +41,53 @@ const game2Captures = {
     e7: "e5",
     b1: "c3",
     g7: "g6",
-    e8: "h8"
+    e8: "h8",
+};
+
+// https://lichess.org/o8BAALZL
+const game3 =
+    "e3 e5 Nf3 Nc6 Bc4 d5 Bb3 Be6 c4 Nf6 cxd5 Bxd5 Bxd5 Nxd5 d4 e4 Ne5 Nxe5 dxe5 Qg5 Qa4+ c6 b4 Nxb4 Qxb4 Bxb4+";
+const game3Captures = {
+    d7: "d5",
+    c2: "d5",
+    c8: "d5",
+    f1: "d5",
+    g1: "e5",
+    b8: "e5",
+    b2: "b4",
+    g8: "b4",
+    d1: "b4",
+};
+
+// https://lichess.org/1jkn0aKA
+const game4 =
+    "d4 Nf6 Nf3 g6 Ng5 Bg7 e3 d5 Nc3 e6 Bb5+ Bd7 Bd3 O-O h4 h6 Nf3 Re8 g4 Nxg4 Ng5 Nf6 e4 hxg5 e5 Ne4 Nxe4 dxe4 Bxe4 gxh4 Rxh4 Kf8 Qf3 Qxh4 Bxg6 Ke7 Qxf7+ Kd8 Qxg7 c6 Bxe8 Bxe8 Bg5+ Qxg5 Qxg5+ Kc7 Qf6 Bd7 Rd1 Na6 c4 Nb4 a3 Na6 d5 cxd5 cxd5 exd5 Rc1+ Bc6 Qf7+ Kb6 e6 Rh8 e7 Rh1+ Ke2 Rxc1 e8=Q Bxe8 Qxe8 Rc2+ Kd3 Rxb2 f4 Rb3+ Kc2 Rxa3 Qd8+ Nc7 Qd6+ Ka5 Qxa3+ Kb6 f5 Kc6 f6 Ne6 Qe3 Kd7 Qd3 Nf4 Qb5+ Kd6 f7 Ke6 Qe8+ Kf6 f8=Q+";
+const game4Captures = {
+    g2: "g4",
+    g1: "g5",
+    g8: "e4",
+    b1: "e4",
+    d7: "e4",
+    h2: "h4",
+    h7: "h4",
+    h1: "h4",
+    g7: "g6",
+    f7: "f7",
+    f8: "g7",
+    h8: "e8",
+    f1: "e8",
+    c1: "g5",
+    d8: "g5",
+    d2: "d5",
+    c7: "d5",
+    c2: "d5",
+    a1: "c1",
+    e2: "e8",
+    c8: "e8",
+    b2: "b2",
+    a2: "a3",
+    a8: "a3",
+    f2: "f8",
 };
 
 function objectEquals(obj1, obj2) {
@@ -72,7 +119,18 @@ function objectEquals(obj1, obj2) {
     if (c > 0) {
         return false;
     }
+
     return true;
 }
 
-export { game1, game1Captures, game2, game2Captures, objectEquals };
+export {
+    game1,
+    game1Captures,
+    game2,
+    game2Captures,
+    game3,
+    game3Captures,
+    game4,
+    game4Captures,
+    objectEquals,
+};
