@@ -1,4 +1,5 @@
 import "./App.css";
+import Lichess from "./lichess";
 
 import * as Chess from "chess.js"
 import {processGame, checkCode} from './ripchess'
@@ -7,6 +8,7 @@ checkCode()
 function App() {
     return <div className="App">
         <h1>ripchess</h1>
+        <Lichess />
     </div>;
 }
 
