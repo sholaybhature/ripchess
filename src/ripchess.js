@@ -12,6 +12,7 @@ import {
 
 import boardNotation from "./board";
 import * as Chess from "chess.js";
+import movesArray from "./lichess";
 
 /**
  * Given a list of the moves in a chess game, return the squares where the pieces were captured.
@@ -151,10 +152,23 @@ export function testCode(gamesMovesList, gamePiecesCaptureList) {
         }
     }
 }
-export function checkCode() {
-    testCode(
-        [game1, game2, game3, game4],
-        [game1Captures, game2Captures, game3Captures, game4Captures]
-    );
+
+export function passMoves(gamesMovesList) {
+    for(let i=0; i<gamesMovesList.length; i++) {
+        console.log('Game: ', i)
+        processGame(gamesMovesList[i]);
+    }
 }
+
+// export function checkCode() {
+//     passMoves(movesArray);
+// }
+// export function checkCode() {}
+// console.log(movesArray);
+// export function checkCode() {
+//     testCode(
+//         [game1, game2, game3, game4],
+//         [game1Captures, game2Captures, game3Captures, game4Captures]
+//     );
+// }
 
