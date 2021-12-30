@@ -9,8 +9,8 @@
     const options= {
         method:'GET',
         mode: 'cors',
-        headers:{
-        'Access-Control-Allow-Origin':'*'
+        headers:{"Access-Control-Allow-Origin" : "https://web.postman.co/", // Required for CORS support to work
+        "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
     },
 }
 const axios = require('axios');
