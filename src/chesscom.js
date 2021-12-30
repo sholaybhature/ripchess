@@ -1,53 +1,70 @@
- import { passMoves } from './ripchess'
+import { useState, useEffect } from "react";
+export function ChessComAPI(props) {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [monthlyArchives, setMonthlyArchives] = useState([]);
+  const [gameArchives, setGameArchives] = useState([]);
+  // const BASEAPI = "https://api.chess.com/pub/player/monarkjain/games/archive"
+  const BASEAPI = `https://api.chess.com/pub/player/${props.username}`;
+  const monthlyArchiveURL = BASEAPI + "/games/archives";
+  const baseGamesArchiveURL = BASEAPI + "/games/";
+  let promisesArr = [];
+  const fetchMonthlyGames = async (arr) => {
+    let promisesArrr = arr.map((item) => {
+      return fetch(item)
+        .then((res) => res.json())
+        .then((res) => res.games);
+    });
+    console.log(promisesArrr);
+    return await Promise.all(promisesArrr);
+    // const r = fetch(baseGamesArchiveURL + "2020/07");
+    // return await r.then((res) => res.json());
+  };
 
-    // const options = {
-    //     method : 'GET',
-    //     headers: new Headers({'accept': 'application/json'}),
-    //     mode: 'no-cors'
+  useEffect(() => {
+    fetch(monthlyArchiveURL)
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setMonthlyArchives(result.archives);
+        },
+        (error) => {
+          console.log("error in fetching monthlyArchives: ", error);
+        }
+      );
+  }, []);
+  const fetchAllGames = async (url) => {
+    const res = await fetch(url);
+    const json = await res.json();
+    const result = await Promise.all(
+      json.archives.map(async (item) => {
+        const res = await fetch(item);
+        const data = await res.json();
+        const games = await data.games;
+        return games;
+      })
+    );
+    return result;
+  };
+
+  useEffect(() => {
+    const result = fetchAllGames(monthlyArchiveURL);
+    console.log(result);
+    // let games = fetchMonthlyGames(monthlyArchives);
+    // console.log(games);
+    // console.log(r.then((r) => console.log(r.games)));
+    // fetch(baseGamesArchiveURL + "2020/07")
+    // .then((res) => res.json())
+    // .then(
+    // (result) => {
+    // setGameArchives(result);
+    // },
+    // (error) => {
+    // console.log("error in fetching gameArchives: ", error);
     // }
-
-    const options= {
-        method:'GET',
-        mode: 'cors',
-        headers:{
-        'Access-Control-Allow-Origin':'*'
-    },
+    // );
+  }, [monthlyArchives]);
+  // console.log(monthlyArchives);
+  // console.log(gameArchives);
+  // fetchAllGames(monthlyArchiveURL);
+  return <></>;
 }
-const axios = require('axios');
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-axios({
-    method: 'get',
-    url: 'https://www.chess.com/callback/live/game/28911003455',
-  })
-    .then(function (response) {
-      console.log(response);
-    });
-    
-    export const getGames = async () => {
-        let response = await fetch(`https://www.chess.com/callback/live/game/28911003455`, options);
-        let data = await response.json();
-        // var movesArray = data.map(obj => obj.moves);
-        // for (let i=0; i<movesArray.length; i++) {
-        //     movesArray[i] = [movesArray[i]];
-        // }
-        console.log(data);
-        // passMoves(movesArray);
-    }
-var ChessWebAPI = require('chess-web-api');
-
-var chessAPI = new ChessWebAPI();
-
-chessAPI.getPlayerMonthlyArchives('monarkjain')
-    .then(function(response) {
-        console.log('Player Profile', response.body);
-    }, function(err) {
-        console.error(err);
-    });
-chessAPI.getPlayerCompleteMonthlyArchives('monarkjain',2021,10)
-    .then(function(response) {
-        console.log('Player Profile', response.body);
-    }, function(err) {
-        console.error(err);
-    });
-
-   
