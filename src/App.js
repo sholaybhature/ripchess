@@ -1,7 +1,6 @@
 import "./App.css";
 import { ChessComAPI } from "./chesscom";
-import { processPgn } from "./ripchess";
-processPgn();
+// cjasnbckjanck
 function App() {
   return (
     <div className="App">
