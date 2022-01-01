@@ -1,10 +1,11 @@
 import "./App.css";
 import { fetchChessCom } from "./chesscom";
 import { fetchLiChessCom } from "./lichess";
-let username = "cjasnbckjanck";
+// let username = "cjasnbckjanck";
+let username = "monarkjain";
 // let res = fetchChessCom(username);
+// console.log(res);
 let res = fetchLiChessCom();
-console.log(res);
 function App() {
   return (
     <div className="App">

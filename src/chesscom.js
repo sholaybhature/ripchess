@@ -21,7 +21,8 @@ const fetchAllGames = async (url) => {
 };
 // TODO: data only for the playing side of the chess game
 // Return data processed from chess.com
-export function fetchChessCom(username) {
+export async function fetchChessCom(username) {
+  const t0 = performance.now();
   const BASEAPI = `https://api.chess.com/pub/player/${username}/games/archives`;
   // TODO: This creates a new chess instance everytime, bad code?
   const result = fetchAllGames(BASEAPI);
@@ -43,5 +44,8 @@ export function fetchChessCom(username) {
       }
     });
   });
+  const les = await result;
+  const t1 = performance.now();
+  console.log(`It took ${t1 - t0} milliseconds`);
   return chessPieces;
 }

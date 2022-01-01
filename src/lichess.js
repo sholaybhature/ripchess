@@ -5,9 +5,12 @@ const options = {
   method: "GET",
   headers: new Headers({ accept: "application/x-ndjson" }),
 };
-// TODO: Fetch all games, instead of just 30.
+// TODO: Add a util function for chessPieces.
 export const fetchLiChessCom = async () => {
+  var count = 0;
+  const t0 = performance.now();
   let response = await fetch(
+    // `https://lichess.org/api/games/user/sp1nalcord?pgnInJson=true`,
     `https://lichess.org/api/games/user/sp1nalcord?max=7`,
     options
   );
@@ -15,9 +18,11 @@ export const fetchLiChessCom = async () => {
   const reader = ndjsonStream(response.body).getReader();
   while (true) {
     const { value, done } = await reader.read();
+    console.log(value);
     if (done) break;
     let game = value.moves;
     let resGame = processGame(game);
+    count = count + 1;
     // console.log(resGame);
     Object.entries(resGame).forEach(([key, value]) => {
       if (chessPieces[key][value]) {
@@ -27,5 +32,7 @@ export const fetchLiChessCom = async () => {
       }
     });
   }
-  console.log(chessPieces);
+  const t1 = performance.now();
+  console.log(`It took ${t1 - t0} milliseconds`);
+  console.log(chessPieces, count);
 };
