@@ -1,51 +1,44 @@
 import pRetry from "p-retry";
 import { processGame } from "./ripchess";
-import { chessPieces } from "./board";
-// TODO: Better error handling
-// Fetch all games from chess.com
-const fetchAllGames = async (url) => {
-  const res = await fetch(url);
-  const json = await res.json();
-  const result = await Promise.allSettled(
-    json.archives.map(async (item) => {
-      // HACK: If bunch requesting, chess.com returns CORS error
-      // for a few requests, instead of sending sequential requests,
-      // just try again.
-      const res = await pRetry(() => fetch(item), { retries: 5 });
-      const data = await res.json();
-      const games = await data.games;
-      return games;
-    })
-  );
-  return result;
+import { finalPieces } from "./utility";
+
+// Fetch monthly archives URL
+const fetchMonthlyArchives = async (monthlyArchiveURL) => {
+  let json;
+  try {
+    // If fetch fails, retry
+    const res = await pRetry(() => fetch(monthlyArchiveURL), { retries: 3 });
+    json = await res.json();
+  } catch (err) {
+    console.log("Error fetching monthly archives", err);
+  }
+  return json;
 };
-// TODO: data only for the playing side of the chess game
-// Return data processed from chess.com
-export async function fetchChessCom(username) {
-  const t0 = performance.now();
-  const BASEAPI = `https://api.chess.com/pub/player/${username}/games/archives`;
-  // TODO: This creates a new chess instance everytime, bad code?
-  const result = fetchAllGames(BASEAPI);
-  result.then((res) => {
-    res.forEach((item) => {
-      console.log(item);
-      if (item.status === "fulfilled") {
-        for (let i = 0; i < item.value.length; i++) {
-          let game = item.value[i].pgn;
-          let resGame = processGame(game);
-          Object.entries(resGame).forEach(([key, value]) => {
-            if (chessPieces[key][value]) {
-              chessPieces[key][value] += 1;
-            } else {
-              chessPieces[key][value] = 1;
-            }
-          });
-        }
+
+// Process each game from the monthly archives
+export const fetchChessCom = async (username) => {
+  let json, res;
+  let monthlyArchiveURL = `https://api.chess.com/pub/player/${username}/games/archives`;
+  let monthlyArchives = fetchMonthlyArchives(monthlyArchiveURL);
+  // Final dict to store captured pieces
+  let d = {};
+  let links = await monthlyArchives;
+  // Could do asynchronous requests here but chess.com recommends sequential
+  // requests, otherwise it leads to 429 error.
+  for (let item of links.archives) {
+    try {
+      let response = await pRetry(() => fetch(item), { retries: 3 });
+      json = await response.json();
+      for (let game of json.games) {
+        // Can do better here?
+        res = processGame(game.pgn);
+        finalPieces(res, d);
       }
-    });
-  });
-  const les = await result;
-  const t1 = performance.now();
-  console.log(`It took ${t1 - t0} milliseconds`);
-  return chessPieces;
-}
+      // TODO: Improve error handling
+    } catch (err) {
+      console.log("Error fetching games for a month", err);
+    }
+  }
+  // Returns a promise, val can be accessed by .then()
+  return d;
+};
