@@ -1,10 +1,13 @@
 import "./App.css";
-import { ChessComAPI } from "./chesscom";
-// cjasnbckjanck
+import { fetchChessCom } from "./chesscom";
+import { fetchLiChessCom } from "./lichess";
+let username = "cjasnbckjanck";
+// let res = fetchChessCom(username);
+let res = fetchLiChessCom();
+console.log(res);
 function App() {
   return (
     <div className="App">
-      <ChessComAPI username="monarkjain" />
       <h1>ripchess</h1>
     </div>
   );

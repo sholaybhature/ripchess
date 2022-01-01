@@ -29,7 +29,7 @@ export function processGame(chessMovesList) {
   let chessPieces = {};
   let finalCapturedPieces = {};
   let chessMoves = chess.history({ verbose: true });
-  console.log(chessMoves);
+  // console.log(chessMoves);
   // Iterate over all the chess moves
   for (let i = 0; i < chessMoves.length; i++) {
     let currMove = chessMoves[i];
@@ -136,9 +136,9 @@ export function processGame(chessMovesList) {
     }
   }
   let chessHistory = chess.history({ verbose: true });
-  console.log("History: ", chessHistory);
-  console.log("Chess Pieces: ", chessPieces);
-  console.log("Captured: ", finalCapturedPieces);
+  // console.log("History: ", chessHistory);
+  // console.log("Chess Pieces: ", chessPieces);
+  // console.log("Captured: ", finalCapturedPieces);
   return finalCapturedPieces;
 }
 
