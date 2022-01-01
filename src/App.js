@@ -1,11 +1,13 @@
 import "./App.css";
 import { fetchChessCom } from "./chesscom";
-import { fetchLiChessCom } from "./lichess";
+import { fetchLichessCom } from "./lichess";
+// import { fetchChessCom } from "./chesscom2";
 // let username = "cjasnbckjanck";
 let username = "monarkjain";
-// let res = fetchChessCom(username);
-// console.log(res);
-let res = fetchLiChessCom();
+let username2 = "sp1nalcord";
+let res = fetchChessCom(username);
+// let res = fetchLichessCom(username2);
+res.then((i) => console.log(i));
 function App() {
   return (
     <div className="App">
