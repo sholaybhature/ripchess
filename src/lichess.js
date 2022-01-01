@@ -1,6 +1,7 @@
 import { processGame } from "./ripchess";
 import ndjsonStream from "can-ndjson-stream";
 import { finalPieces } from "./utility";
+import pRetry from "p-retry";
 const options = {
   method: "GET",
   headers: new Headers({ accept: "application/x-ndjson" }),
@@ -11,7 +12,7 @@ export const fetchLichessCom = async (username) => {
   let res;
   let d = {};
   // let fetchURL = `https://lichess.org/api/games/user/${username}?max=7`;
-  let response = await fetch(fetchURL, options);
+  let response = await pRetry(() => fetch(fetchURL, options), { retries: 3 });
   // Streaming the ndjson response
   const reader = ndjsonStream(response.body).getReader();
   while (true) {
