@@ -1,28 +1,19 @@
 import "./App.css";
-import Lichess from "./lichess";
-import { getGames } from "./chesscom";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Homepage from "./components/homepage.js";
-import * as Chess from "chess.js";
-import { processGame, checkCode } from "./ripchess";
-import Navbar_rip from "./components/navbar";
-import Heatmap from "./components/heatmap";
+import { fetchChessCom } from "./chesscom";
+import Search from "./components/search";
+import { fetchLichessCom } from "./lichess";
 
-var ChessWebAPI = require("chess-web-api");
-
-var chessAPI = new ChessWebAPI();
-
+// import { fetchChessCom } from "./chesscom2";
+// let username = "cjasnbckjanck";
+let username = "monarkjain";
+let username2 = "sp1nalcord";
+// let res = fetchChessCom(username);
+let res = fetchLichessCom(username2);
+res.then((i) => console.log(i));
 function App() {
   return (
-    <div className="App">
-      <Router>
-        <Navbar_rip />
-        <Routes>
-          {/* <Route exact path="/" element={<Navbar_rip />} /> */}
-          <Route exact path="/homepage" element={<Homepage />} />
-          <Route exact path="/heatmap" element={<Heatmap />} />
-        </Routes>
-      </Router>
+    <div className="parent-container">
+      <Search></Search>
     </div>
   );
 }

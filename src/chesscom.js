@@ -1,53 +1,44 @@
- import { passMoves } from './ripchess'
+import pRetry from "p-retry";
+import { processGame } from "./ripchess";
+import { finalPieces } from "./utility";
 
-    // const options = {
-    //     method : 'GET',
-    //     headers: new Headers({'accept': 'application/json'}),
-    //     mode: 'no-cors'
-    // }
+// Fetch monthly archives URL
+const fetchMonthlyArchives = async (monthlyArchiveURL) => {
+  let json;
+  try {
+    // If fetch fails, retry
+    const res = await pRetry(() => fetch(monthlyArchiveURL), { retries: 3 });
+    json = await res.json();
+  } catch (err) {
+    console.log("Error fetching monthly archives", err);
+  }
+  return json;
+};
 
-    const options= {
-        method:'GET',
-        mode: 'cors',
-        headers:{"Access-Control-Allow-Origin" : "https://web.postman.co/", // Required for CORS support to work
-        "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
-    },
-}
-const axios = require('axios');
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-axios({
-    method: 'get',
-    url: 'https://www.chess.com/callback/live/game/28911003455',
-  })
-    .then(function (response) {
-      console.log(response);
-    });
-    
-    export const getGames = async () => {
-        let response = await fetch(`https://www.chess.com/callback/live/game/28911003455`, options);
-        let data = await response.json();
-        // var movesArray = data.map(obj => obj.moves);
-        // for (let i=0; i<movesArray.length; i++) {
-        //     movesArray[i] = [movesArray[i]];
-        // }
-        console.log(data);
-        // passMoves(movesArray);
+// Process each game from the monthly archives
+export const fetchChessCom = async (username) => {
+  let json, res;
+  let monthlyArchiveURL = `https://api.chess.com/pub/player/${username}/games/archives`;
+  let monthlyArchives = fetchMonthlyArchives(monthlyArchiveURL);
+  // Final dict to store captured pieces
+  let d = {};
+  let links = await monthlyArchives;
+  // Could do asynchronous requests here but chess.com recommends sequential
+  // requests, otherwise it leads to 429 error.
+  for (let item of links.archives) {
+    try {
+      let response = await pRetry(() => fetch(item), { retries: 3 });
+      json = await response.json();
+      for (let game of json.games) {
+        // Can do better here?
+        res = processGame(game.pgn);
+        finalPieces(res, d);
+      }
+      // TODO: Improve error handling
+    } catch (err) {
+      console.log("Error fetching games for a month", err);
     }
-var ChessWebAPI = require('chess-web-api');
-
-var chessAPI = new ChessWebAPI();
-
-chessAPI.getPlayerMonthlyArchives('monarkjain')
-    .then(function(response) {
-        console.log('Player Profile', response.body);
-    }, function(err) {
-        console.error(err);
-    });
-chessAPI.getPlayerCompleteMonthlyArchives('monarkjain',2021,10)
-    .then(function(response) {
-        console.log('Player Profile', response.body);
-    }, function(err) {
-        console.error(err);
-    });
-
-   
+  }
+  // Returns a promise, val can be accessed by .then()
+  return d;
+};

@@ -1,17 +1,25 @@
-import { passMoves } from './ripchess'
-
+import { processGame } from "./ripchess";
+import ndjsonStream from "can-ndjson-stream";
+import { finalPieces } from "./utility";
+import pRetry from "p-retry";
 const options = {
-    method : 'GET',
-    headers: new Headers({'accept': 'application/x-ndjson'}),
-}
-
-export const getGames = async () => {
-    let response = await fetch(`https://lichess.org/api/games/user/sp1nalcord?max=7`, options);
-    let data = (await response.text()).match(/.+/g).map(JSON.parse);
-    var movesArray = data.map(obj => obj.moves);
-    // for (let i=0; i<movesArray.length; i++) {
-    //     movesArray[i] = [movesArray[i]];
-    // }
-    console.log(movesArray);
-    passMoves(movesArray);
-}
+  method: "GET",
+  headers: new Headers({ accept: "application/x-ndjson" }),
+};
+// Fetch all games from Lichess
+export const fetchLichessCom = async (username) => {
+  let fetchURL = `https://lichess.org/api/games/user/${username}?pgnInJson=true`;
+  let res;
+  let d = {};
+  // let fetchURL = `https://lichess.org/api/games/user/${username}?max=7`;
+  let response = await pRetry(() => fetch(fetchURL, options), { retries: 3 });
+  // Streaming the ndjson response
+  const reader = ndjsonStream(response.body).getReader();
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    res = processGame(value.moves);
+    finalPieces(res, d);
+  }
+  return d;
+};
