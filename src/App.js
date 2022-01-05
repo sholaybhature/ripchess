@@ -8,8 +8,8 @@ import { fetchLichessCom } from "./lichess";
 let username = "monarkjain";
 let username2 = "sp1nalcord";
 // let res = fetchChessCom(username);
-let res = fetchLichessCom(username2);
-res.then((i) => console.log(i));
+// let res = fetchLichessCom(username2);
+// res.then((i) => console.log(i));
 function App() {
   return (
     <div className="parent-container">
