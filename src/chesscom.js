@@ -1,6 +1,6 @@
 import pRetry from "p-retry";
 import { processGame } from "./ripchess";
-import { finalPieces } from "./utility";
+import { chessDict, updateFinalPieces } from "./utility";
 
 // Fetch monthly archives URL
 const fetchMonthlyArchives = async (monthlyArchiveURL) => {
@@ -20,8 +20,8 @@ export const fetchChessCom = async (username) => {
   let json, res;
   let monthlyArchiveURL = `https://api.chess.com/pub/player/${username}/games/archives`;
   let monthlyArchives = fetchMonthlyArchives(monthlyArchiveURL);
-  // Final dict to store captured pieces
-  let d = {};
+  // Dict to store captured pieces
+  let d = chessDict();
   let links = await monthlyArchives;
   // Could do asynchronous requests here but chess.com recommends sequential
   // requests, otherwise it leads to 429 error.
@@ -32,7 +32,7 @@ export const fetchChessCom = async (username) => {
       for (let game of json.games) {
         // Can do better here?
         res = processGame(game.pgn);
-        finalPieces(res, d);
+        updateFinalPieces(res, d);
       }
       // TODO: Improve error handling
     } catch (err) {
