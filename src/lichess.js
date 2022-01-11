@@ -8,10 +8,10 @@ const options = {
 };
 // Fetch all games from Lichess
 export const fetchLichessCom = async (username) => {
-  let fetchURL = `https://lichess.org/api/games/user/${username}?pgnInJson=true`;
+  // let fetchURL = `https://lichess.org/api/games/user/${username}?pgnInJson=true`;
   let res;
   let d = {};
-  // let fetchURL = `https://lichess.org/api/games/user/${username}?max=7`;
+  let fetchURL = `https://lichess.org/api/games/user/${username}?max=7`;
   let response = await pRetry(() => fetch(fetchURL, options), { retries: 3 });
   // Streaming the ndjson response
   const reader = ndjsonStream(response.body).getReader();
