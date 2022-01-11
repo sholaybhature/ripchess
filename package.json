@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@visx/group": "^2.1.0",
     "@visx/heatmap": "^2.1.2",
+    "@visx/responsive": "^2.4.1",
     "@visx/scale": "^2.2.2",
     "axios": "^0.24.0",
     "can-ndjson-stream": "^1.0.2",
