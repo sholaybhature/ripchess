@@ -1,18 +1,15 @@
 import "./App.css";
-import { fetchChessCom } from "./chesscom";
-import { fetchLichessCom } from "./lichess";
-// import { fetchChessCom } from "./chesscom2";
-// let username = "cjasnbckjanck";
-let username = "monarkjain";
-let username2 = "sp1nalcord";
-// let res = fetchChessCom(username);
-let res = fetchLichessCom(username2);
-res.then((i) => console.log(i));
+import { Heatmap } from "./heatmap";
+import { ParentSize } from "@visx/responsive";
+import Search from "./components/search";
 function App() {
   return (
-    <div className="App">
-      <h1>ripchess</h1>
+    <div className="parent-container">
+      <Search></Search>
     </div>
+    // <ParentSize>
+    // {({ width, height }) => <Heatmap width={width} height={height} />}
+    // </ParentSize>
   );
 }
 

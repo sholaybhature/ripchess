@@ -1,6 +1,6 @@
 import { processGame } from "./ripchess";
 import ndjsonStream from "can-ndjson-stream";
-import { finalPieces } from "./utility";
+import { chessDict, updateFinalPieces } from "./utility";
 import pRetry from "p-retry";
 const options = {
   method: "GET",
@@ -8,10 +8,11 @@ const options = {
 };
 // Fetch all games from Lichess
 export const fetchLichessCom = async (username) => {
-  let fetchURL = `https://lichess.org/api/games/user/${username}?pgnInJson=true`;
+  // let fetchURL = `https://lichess.org/api/games/user/${username}?pgnInJson=true`;
   let res;
-  let d = {};
-  // let fetchURL = `https://lichess.org/api/games/user/${username}?max=7`;
+  // Dict to store captured pieces
+  let d = chessDict();
+  let fetchURL = `https://lichess.org/api/games/user/${username}?max=7`;
   let response = await pRetry(() => fetch(fetchURL, options), { retries: 3 });
   // Streaming the ndjson response
   const reader = ndjsonStream(response.body).getReader();
@@ -19,7 +20,7 @@ export const fetchLichessCom = async (username) => {
     const { value, done } = await reader.read();
     if (done) break;
     res = processGame(value.moves);
-    finalPieces(res, d);
+    updateFinalPieces(res, d);
   }
   return d;
 };

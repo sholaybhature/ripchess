@@ -1,19 +1,5 @@
-// import {
-// game1,
-// game1Captures,
-// game2,
-// game2Captures,
-// game3,
-// game3Captures,
-// game4,
-// game4Captures,
-// objectEquals,
-// } from "./testLogic";
-
 import { boardNotation } from "./board";
 import * as Chess from "chess.js";
-import { game1 } from "./testLogic";
-// import movesArray from "./lichess";
 /**
  * Given a list of the moves in a chess game, return the squares where the pieces were captured.
  * Basic logic is to track the last move of each piece using a dict, and delete that piece
@@ -23,13 +9,11 @@ import { game1 } from "./testLogic";
  */
 export function processGame(chessMovesList) {
   let chess = new Chess();
-  let chessLoad = chess.load_pgn(chessMovesList);
-  // let chessMoves = chessMovesList.split(" ");
+  chess.load_pgn(chessMovesList);
   // To keep track of individual chess pieces
   let chessPieces = {};
   let finalCapturedPieces = {};
   let chessMoves = chess.history({ verbose: true });
-  // console.log(chessMoves);
   // Iterate over all the chess moves
   for (let i = 0; i < chessMoves.length; i++) {
     let currMove = chessMoves[i];
@@ -41,11 +25,11 @@ export function processGame(chessMovesList) {
     // If castling, move the rook to it's new place
     if (currMove.san == "O-O") {
       let rookPiece = currMove.color + "rh";
-      chessPieces[rookPiece] = currMove.color == "w" ? ["f1"] : ["f8"];
+      chessPieces[rookPiece] = currMove.color == "w" ? "f1" : "f8";
     }
     if (currMove.san == "O-O-O") {
       let rookPiece = currMove.color + "ra";
-      chessPieces[rookPiece] = currMove.color == "w" ? ["d1"] : ["d8"];
+      chessPieces[rookPiece] = currMove.color == "w" ? "d1" : "d8";
     }
 
     /*
@@ -135,40 +119,5 @@ export function processGame(chessMovesList) {
         chess.turn() == "b" ? "e1" : "e8";
     }
   }
-  let chessHistory = chess.history({ verbose: true });
-  // console.log("History: ", chessHistory);
-  // console.log("Chess Pieces: ", chessPieces);
-  // console.log("Captured: ", finalCapturedPieces);
   return finalCapturedPieces;
 }
-
-// Ignore, just for testing
-// export function testCode(gamesMovesList, gamePiecesCaptureList) {
-// for (let i = 0; i < gamesMovesList.length; i++) {
-// console.log("Game: ", i);
-// let game = processGame(gamesMovesList[i]);
-// let res = objectEquals(game, gamePiecesCaptureList[i]);
-// if (res === false) {
-// console.log("Error");
-// }
-// }
-// }
-
-// export function passMoves(gamesMovesList) {
-// for (let i = 0; i < gamesMovesList.length; i++) {
-// console.log("Game: ", i);
-// processGame(gamesMovesList[i]);
-// }
-// }
-
-// export function checkCode() {
-//     passMoves(movesArray);
-// }
-// export function checkCode() {}
-// console.log(movesArray);
-// export function checkCode() {
-//     testCode(
-//         [game1, game2, game3, game4],
-//         [game1Captures, game2Captures, game3Captures, game4Captures]
-//     );
-// }
