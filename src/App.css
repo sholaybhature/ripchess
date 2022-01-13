@@ -1,38 +1,143 @@
-.App {
-  text-align: center;
+:root {
+  --font-size-desktop: 16px;
+  --font-size-mobile: 14px;
+  --light-gray: #9e9ea7;
+  --select-black: #020c0e;
+  --white: #ffffff;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  background-color: #0e131f;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+.parent-container {
+  width: 90%;
+  margin: 0 auto;
   min-height: 100vh;
+}
+
+.search-input-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  width: 100%;
+  height: 15vh;
 }
 
-.App-link {
-  color: #61dafb;
+.search-input-with-dropdown {
+  display: flex;
+  height: 48px;
+  width: 100%;
+  max-width: 628px;
+  border-radius: 8px;
+  background: var(--white);
+  box-shadow: 0px 8px 20px rgb(0 0 0 / 6%);
+  border: 1px solid var(--select-black);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.left-side-wrapper {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  padding-left: 28px;
+  align-items: center;
+}
+.input-icon {
+  padding-right: 14px;
+  font-size: 24px;
+  padding-top: 4px;
+}
+
+.input-icon svg {
+  color: var(--light-gray);
+}
+
+.search-input-box {
+  border: none;
+  font-size: var(--font-size-desktop);
+  width: 100%;
+}
+input:focus {
+  outline: none;
+}
+::placeholder {
+  color: var(--light-gray);
+}
+
+.btn-dropdown {
+  height: 100%;
+  position: relative;
+  display: flex;
+  width: 30%;
+}
+
+.btn-dropdown select {
+  appearance: none;
+  outline: 0;
+  border: 0;
+  flex: 1;
+  box-shadow: none;
+  color: var(--select-black);
+  background-color: transparent;
+  cursor: pointer;
+  height: 100%;
+  font-size: var(--font-size-desktop);
+}
+
+.btn-dropdown::before {
+  content: "";
+  width: 2px;
+  height: 50%;
+  margin-right: 24px;
+  background: var(--light-gray);
+  align-self: center;
+}
+
+.btn-dropdown::after {
+  content: "";
+  position: absolute;
+  top: 35%;
+  right: 10%;
+  padding: 1em;
+  background-color: transparent;
+  transition: 0.25s all ease;
+  pointer-events: none;
+  border: solid var(--select-black);
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+@media (max-width: 576px) {
+  .search-input-with-dropdown {
+    height: 40px;
   }
-  to {
-    transform: rotate(360deg);
+  .left-side-wrapper {
+    padding-left: 14px;
+  }
+  .input-icon {
+    padding-right: 7px;
+    font-size: var(--font-size-mobile);
+  }
+  .search-input-box {
+    font-size: var(--font-size-mobile);
+  }
+  .btn-dropdown {
+    width: 35%;
+  }
+
+  .btn-dropdown select {
+    font-size: var(--font-size-mobile);
+  }
+  .btn-dropdown::before {
+    margin-right: 12px;
+  }
+}
+
+@media (max-width: 321px) {
+  .btn-dropdown {
+    width: 40%;
   }
 }
